@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# SYNOPSIS
+#		add-favorite-priest <username> <password> <priest-id>
+# 
+# DESCRIPTION
+#		Adds favorit priest for the specified user.
+#
+#		References:
+# 		https://geoconfess.herokuapp.com/apidoc/V1/favorites.html
+
+script=$(basename $0)
+bin=$(dirname $0)
+source "$bin/geoconfess-kit"
+
+function show_usage {
+	echo "usage: $script: <username> <password> <priest-id>"
+	exit 1
+}
+
+# User auth info.
+username="$1"
+password="$2"
+check_arg "username" "$username" || show_usage
+check_arg "password" "$password" || show_usage
+
+# User login.
+access_token=$($bin/oauth-token $username $password)
+test $? != 0 && exit 1
+
+# Add favorite args.
+priest_id="$3"
+check_arg "priest-id" "$priest_id" || show_usage
+
+# Favorites information.
+favorites_response=$(curl --silent \
+	-F access_token=$access_token \
+	-F favorite[priest_id]=$priest_id \
+	-X POST "$geoconfess_url/api/v1/favorites")
+echo $favorites_response | json_pp

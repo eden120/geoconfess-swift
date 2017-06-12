@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# SYNOPSIS
+#		create-spot <username> <password> <name> <activity> ...
+# 
+# DESCRIPTION
+#		Creates spot. For admin and priest only.
+#
+#		References:
+# 		http://geoconfess.herokuapp.com/apidoc/V1/spots.html
+
+script=$(basename $0)
+bin=$(dirname $0)
+source "$bin/geoconfess-kit"
+
+function show_usage {
+	echo "usage: $script: <username> <password> \
+<name> <activity> <latitude> <longitude> \
+[<street> <postcode> <city> <state> <country>]"
+	exit 1
+}
+
+# User auth info.
+username="$1"
+password="$2"
+check_arg "username" "$username" || show_usage
+check_arg "password" "$password" || show_usage
+
+# User login.
+access_token=$($bin/oauth-token $username $password)
+test $? != 0 && exit 1
+
+# Spot info.
+name="$3"
+activity="$4"
+latitude="$5"
+longitude="$6"
+street="$7"
+postcode="$8"
+city="$9"
+state="${10}"
+country="${11}"
+check_arg "name"      "$name"      || show_usage
+check_arg "activity"  "$activity"  || show_usage
+check_arg "latitude"  "$latitude"  || show_usage
+check_arg "longitude" "$longitude" || show_usage
+
+
+# Spots information.
+spots_response=$(curl --silent \
+	-F access_token=$access_token \
+	-F spot[name]=$name \
+	-F spot[activity_type]=$activity \
+	-F spot[latitude]=$latitude \
+	-F spot[longitude]=$longitude \
+	-F spot[street]="$street" \
+	-F spot[postcode]="$postcode" \
+	-F spot[city]="$city" \
+	-F spot[state]="$state" \
+	-F spot[country]="$country" \
+	-X POST "$geoconfess_url/api/v1/spots")
+echo $spots_response | json_pp

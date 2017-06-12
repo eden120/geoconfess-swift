@@ -54,12 +54,6 @@ to restart Xcode.
 
 ## Backend
 
-Our backend API is documented [here](http://geoconfess.herokuapp.com/apidoc/V1.html).
-
-Some useful scripts are available in the `bin` directory 
-for playing with the backend (eg, `bin/show-user`).
-
-The [Pusher](https://pusher.com) service is used for *realtime* notifications.
 
 ## Testing
 

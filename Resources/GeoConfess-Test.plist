@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Priest Live Tracking Max Update Interval (minutes)</key>
+	<real>0.15</real>
+	<key>Priest Max Distance from Last Update (meters)</key>
+	<real>15</real>
+	<key>User Spots Refresh Rate (minutes)</key>
+	<real>0.15</real>
+	<key>User Spots Max Radius (km)</key>
+	<integer>50</integer>
+	<key>Show Only Active Spots on the Map</key>
+	<false/>
+</dict>
+</plist>

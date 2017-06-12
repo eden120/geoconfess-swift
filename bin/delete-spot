@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# SYNOPSIS
+#		delete-spot <username> <password> <spot-id>
+# 
+# DESCRIPTION
+#		Deletes the specified spot. For priests only.
+#
+#		References:
+# 		http://geoconfess.herokuapp.com/apidoc/V1/spots.html#description-destroy
+
+script=$(basename $0)
+bin=$(dirname $0)
+source "$bin/geoconfess-kit"
+
+function show_usage {
+	echo "usage: $script: <username> <password> <spot-id>"
+	exit 1
+}
+
+# User auth info.
+username="$1"
+password="$2"
+check_arg "username" "$username" || show_usage
+check_arg "password" "$password" || show_usage
+
+# User login.
+access_token=$($bin/oauth-token $username $password)
+test $? != 0 && exit 1
+
+# Spot ID.
+spot_id="$3"
+check_arg "spot_id" "$spot_id" || show_usage
+
+# Deletes spot.
+delete_response=$(curl --silent \
+	-F access_token=$access_token \
+	-X DELETE "$geoconfess_url/api/v1/spots/$spot_id")
+test $? -ne 0 && echo $delete_response

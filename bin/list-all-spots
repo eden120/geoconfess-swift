@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# SYNOPSIS
+#		list-all-spots <username> <password> [<latitude> <longitude>]
+# 
+# DESCRIPTION
+#		List of all spots of specified user.
+#
+#		References:
+# 		http://geoconfess.herokuapp.com/apidoc/V1/spots/me_spots_stub.html
+
+script=$(basename $0)
+bin=$(dirname $0)
+source "$bin/geoconfess-kit"
+
+function show_usage {
+	echo "usage: $script: <username> <password> [<latitude> <longitude>]"
+	exit 1
+}
+
+# User auth info.
+username="$1"
+password="$2"
+check_arg "username" "$username" || show_usage
+check_arg "password" "$password" || show_usage
+
+# User login.
+access_token=$($bin/oauth-token $username $password)
+test $? != 0 && exit 1
+
+# Spot info.
+latitude="$3"
+longitude="$4"
+
+# Spots information.
+spots_response=$(curl --silent \
+	-F access_token=$access_token \
+	-F lat=$latitude \
+	-F lng=$longitude \
+	-F distance=17 \
+	-X GET "$geoconfess_url/api/v1/spots")
+echo $spots_response | json_pp
+#-F now=false \
